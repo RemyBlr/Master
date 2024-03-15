@@ -3,14 +3,15 @@
   instance?
 
 ```
-TODO
+The smallest instance type is the t2.nano, it uses only 1 vCPU and 0.5 GiB of memory.
+The biggest one is the u-6tb1.112xlarge, it uses 448 vCPU and 6144 GiB of memory.
 ```
 
 * How long did it take for the new instance to get into the _running_
   state?
 
 ```
-TODO
+It only took a few seconds for the instance to be in the running state
 ```
 
 * Using the commands to explore the machine listed earlier, respond to
@@ -20,19 +21,23 @@ TODO
       the machine?
       
     ```
-    TODO
+    Once you're logged in with ssh you can use the 'date' command and it tells you the date and time for the machine.
+    It shows that the machine is one hour behind us (Switzerland time).
     ```
 
     * What's the name of the hypervisor?
     
     ```
-    TODO
+    This time we used an aws command the get the hypervisor. You can use the following command with the right instance id:
+    aws ec2 describe-instances --instance-ids INSTANCE_ID --query 'Reservations[*].Instances[*].Hypervisor'
+    The result is 'xen'.
     ```
 
     * How much free space does the disk have?
     
     ```
-    TODO
+    Again once logged with ssh you can use the following command to get the different spaces left on the disk: df -hT .
+    The '.' represents the current mounted disk. The entire space is 7.7G and 5.9G is currently left.
     ```
 
 
