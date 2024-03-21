@@ -216,7 +216,9 @@ aws ec2 run-instances \
 //updated string connection
 ssh devopsteam08@15.188.43.46 -i ~/.ssh/CLD_KEY_DMZ_DEVOPSTEAM08.pem \
 -L 2223:10.0.8.10:22 \
--L 2224:10.0.8.140:22
+-L 2224:10.0.8.140:22 \
+-L 8080:10.0.8.10:8080 \
+-L 8081:10.0.8.140:8081
 
 // Test in new shell
 ssh bitnami@localhost -p 2223 -i ~/.ssh/CLD_KEY_DRUPAL_DEVOPSTEAM08.pem
@@ -235,10 +237,15 @@ ssh bitnami@localhost -p 2224 -i ~/.ssh/CLD_KEY_DRUPAL_DEVOPSTEAM08.pem
 // Connect on 10.0.8.10
 mysql -h dbi-devopsteam08.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
 // Then
-SHOW GRANTS for 'bn_drupal'@'10.0.8.0/28';
+show databases;
 
 [OUTPUT]
-ERROR 1044 (42000): Access denied for user 'bn_drupal'@'10.0.8.%' to database 'mysql'
++--------------------+
+| Database           |
++--------------------+
+| bitnami_drupal     |
+| information_schema |
++--------------------+
 ```
 
 ```sql
@@ -247,17 +254,22 @@ ERROR 1044 (42000): Access denied for user 'bn_drupal'@'10.0.8.%' to database 'm
 // Connect on 10.0.8.140
 mysql -h dbi-devopsteam08.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
 // Then
-SHOW GRANTS for 'bn_drupal'@'10.0.8.0/28';
+show databases;
 
 [OUTPUT]
-ERROR 1044 (42000): Access denied for user 'bn_drupal'@'10.0.8.%' to database 'mysql'
++--------------------+
+| Database           |
++--------------------+
+| bitnami_drupal     |
+| information_schema |
++--------------------+
 ```
 
 ### Check HTTP Accesses
 
 ```bash
 //connection string updated
-//TODO
+curl -I http://localhost:8080
 ```
 
 ### Read and write test through the web app
