@@ -281,7 +281,7 @@ curl -I http://localhost:8080
 * Observations ?
 
 ```
-//TODO
+The email changes for both users.
 ```
 
 ### Change the profil picture
@@ -289,5 +289,5 @@ curl -I http://localhost:8080
 * Observations ?
 
 ```
-//TODO
+The image only changes for one user, and not both like the previous test. The image is stored only on one side and the second user doesn't have access to the image.
 ```
