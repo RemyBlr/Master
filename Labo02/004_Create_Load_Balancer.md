@@ -46,6 +46,7 @@ command 2 : {
 }  
 ]  
 }
+
 ```
 
 * Create the Target Group
@@ -227,7 +228,6 @@ command 2 :
 ]  
 }
 
-command 3 : We totally forgot to copy the output
 
 ```
 
@@ -240,7 +240,6 @@ aws elbv2 describe-load-balancers --names ELB-DEVOPSTEAM08 | Select-String -Patt
 
 [OUTPUT]
 internal-ELB-DEVOPSTEAM08-976923715.eu-west-3.elb.amazonaws.com
-
 
 ```
 
@@ -288,6 +287,7 @@ Dns name :    internal-ELB-DEVOPSTEAM08-976923715.eu-west-3.elb.amazonaws.com
 Address:  10.0.8.142
 	        10.0.8.4
 
+
 ```
 
 * From your Drupal instance, identify the ip from which requests are sent by the Load Balancer.
@@ -297,6 +297,7 @@ Help : execute `tcpdump port 8080`
 ```
 tcpdump: enX0: You don't have permission to perform this capture on that device
 (socket: Operation not permitted)
+//TODO
 ```
 
 * In the Apache access log identify the health check accesses from the
