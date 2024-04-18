@@ -14,7 +14,7 @@
 * 1 RDS Database instance - started
 * 1 Elastic Load Balancer - started
 
-## Create a new launch configuration. 
+## Create a new launch template. 
 
 |Key|Value|
 |:--|:--|
@@ -32,7 +32,7 @@
 
 ```
 [INPUT]
-//cli command
+//cli command is optionnal. Important is the screen shot to delivery in next step (testing and validation)
 
 [OUTPUT]
 ```
@@ -68,7 +68,7 @@
 
 ```
 [INPUT]
-//cli command
+//cli command is optionnal. Important is the screen shot to delivery in next step (testing and validation)
 
 [OUTPUT]
 ```
