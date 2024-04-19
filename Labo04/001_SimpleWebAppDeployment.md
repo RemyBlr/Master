@@ -162,29 +162,26 @@ Deliverables:
 
   ```
   Java class files
-  
+  ```
 The servlet handles GET requests and is mapped to the /hello URL path. It display a message containing the app engine and java version used. The code also contains a getInfo methode(), but i don't see it being used in the servlet.
   ```
 
+web.xml
   ```
-  web.xml
-  
   It specifies configuration details for the web app. It defines index.jsp as the welcome file, so that when users access the root URL, they will be redirected to it.
-
 Globally, we can also use it to define servlet-mapping, filter, listener, parameters of context,..
   ```
+appengine-web.xml
 
   ```
-  appengine-web.xml
-	It contains configurations setting to Google App Engine.In our case, 			the infos it conains are: 
+	It contains configurations setting to Google App Engine.In our case, the infos it conains are: 
 	- Java11 as the runtime environment
 	- Indicates that the app is thread-safe, allowing multithreading safely
 	-Enables access to app engine specific API
 	- It also sets the logging config file  to WEB-INF/logging.properties
   ```
+index.jsp
 
   ```
-  index.jsp
-  
   index.jsp is used as our default page, so when a user want to access the app by using the root adress, they will be redirected to it.
   ```
