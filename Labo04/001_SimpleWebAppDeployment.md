@@ -56,7 +56,7 @@ Create a simple web application as follows.
    `HelloAppEngine` file. What does the code do?
 
    ```
-   //TODO
+The servlet handles GET requests and is mapped to the /hello URL path. It display a message containing the app engine and java version used. The code also contains a getInfo methode(), but i don't see it being used in the servlet.
    ```
 
 6. Note the annotation starting with `@WebServlet` in front of the
@@ -66,14 +66,20 @@ Create a simple web application as follows.
    `web.xml`. What information does it contain? And what is its use ?
 
    ```
-   //TODO
+It specifies configuration details for the web app. It defines index.jsp as the welcome file, so that when users access the root URL, they will be redirected to it.
+
+Globally, we can also use it to define servlet-mapping, filter, listener, parameters of context,..
    ```
 
 8. Inspect the Google App Engine configuration file
    `appengine-web.xml` in `webapp/WEB-INF`. What information does it contain?
 
    ```
-   //TODO
+It contains configurations setting to Google App Engine. In our case, the infos it conains are: 
+	- Java11 as the runtime environment
+	- Indicates that the app is thread-safe, allowing multithreading safely
+	-Enables access to app engine specific API
+	- It also sets the logging config file  to WEB-INF/logging.properties
    ```
 
 9. Edit the Google App Engine configuration file as follows:
@@ -85,7 +91,7 @@ Create a simple web application as follows.
     `index.jsp` spotted in `web.xml`. What is its use ?
 
     ```
-    //TODO
+As said earlier, index.jsp is used as our default page, so when a user want to access the app by using the root adress, they will be redirected to it.
     ```
 
 ---
@@ -155,17 +161,30 @@ Deliverables:
   **appengine-web.xml** and **index.jsp** files in a few sentences.
 
   ```
-  //TODO Java class files
+  Java class files
+  
+The servlet handles GET requests and is mapped to the /hello URL path. It display a message containing the app engine and java version used. The code also contains a getInfo methode(), but i don't see it being used in the servlet.
   ```
 
   ```
-  //TODO web.xml
+  web.xml
+  
+  It specifies configuration details for the web app. It defines index.jsp as the welcome file, so that when users access the root URL, they will be redirected to it.
+
+Globally, we can also use it to define servlet-mapping, filter, listener, parameters of context,..
   ```
 
   ```
-  //TODO appengine-web.xml
+  appengine-web.xml
+	It contains configurations setting to Google App Engine.In our case, 			the infos it conains are: 
+	- Java11 as the runtime environment
+	- Indicates that the app is thread-safe, allowing multithreading safely
+	-Enables access to app engine specific API
+	- It also sets the logging config file  to WEB-INF/logging.properties
   ```
 
   ```
-  //TODO index.jsp
+  index.jsp
+  
+  index.jsp is used as our default page, so when a user want to access the app by using the root adress, they will be redirected to it.
   ```
