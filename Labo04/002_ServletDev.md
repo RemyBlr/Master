@@ -88,6 +88,6 @@ Commit and publish the servlet in your repo, in the 'labo4' directory.
 
 ```
 Copy a screenshot of the local and the App Engine console with the Datastore Viewer.
-![Result](.img/screenPart2.png)
+![Result](./img/screenPart2.png)
 
 ```
