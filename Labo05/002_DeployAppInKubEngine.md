@@ -65,20 +65,60 @@ Now you can verify if the ToDo application is working correctly.
 
 Document any difficulties you faced and how you overcame them. Copy the object descriptions into the lab report (if they are unchanged from the previous task just say so).
 
-> // TODO
+> 1. We had the following error while trying to get the credentials for the cluster:
+![Cluster error](./img/cluster_error.png)
+As it is said in the error, we first ran this command to install the missing component : `gcloud components install gke-gcloud-auth-plugin`, then we ran this to get the credentials : `gcloud container clusters get-credentials`
 
 ```````
-// TODO object descriptions
+The previous components we install didn't change at all, thus we judged it wasn't necessary to copy/paste a lot of code again
 ```````
 
 ```yaml
 # frontend-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: frontend
+  name: frontend-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: frontend
+  selector:
+    app: todo
+    component: frontend
+  type: LoadBalancer
 ```
 
 Take a screenshot of the cluster details from the GKE console. Copy the output of the `kubectl describe` command to describe your load balancer once completely initialized.
 
-> // TODO
+![GKE cluster base parameter](./img/gke_cluster_base.png)
+![GKE cluster networking](./img/gke_cluster_network.png)
 
 ```````
-// TODO object descriptions
+// Load balancer
+Name:                     frontend-svc
+Namespace:                default
+Labels:                   component=frontend
+Annotations:              cloud.google.com/neg: {"ingress":true}
+Selector:                 app=todo,component=frontend
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.122.51.177
+IPs:                      10.122.51.177
+LoadBalancer Ingress:     35.187.49.52
+Port:                     frontend  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 frontend  31464/TCP
+Endpoints:                10.44.1.5:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:
+  Type    Reason                Age    From                Message
+  ----    ------                ----   ----                -------
+  Normal  EnsuringLoadBalancer  8m36s  service-controller  Ensuring load balancer
+  Normal  EnsuredLoadBalancer   7m56s  service-controller  Ensured load balancer
 ```````
