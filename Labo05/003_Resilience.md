@@ -1,3 +1,4 @@
+
 # Task 3 - Add and exercise resilience
 
 By now you should have understood the general principle of configuring, running and accessing applications in Kubernetes. However, the above application has no support for resilience. If a container (resp. Pod) dies, it stops working. Next, we add some resilience to the application.
@@ -18,7 +19,8 @@ Converting a Pod to be managed by a Deployment is quite simple.
 
   * Use only 1 instance for the Redis-Server. Why?
 
-    > Reids-Server can't be scalled horizontally as it is a statefull service. When using a single instance of Redis, it simplifies the management of data consistency since there's no need to handle synchronization between multiple instances. A single instance is often sufficient to handle a significant amount of load.
+    > Because it can't be scalled horizontally (it's a statefull service)
+
 
   * Delete all application Pods (using `kubectl delete pod ...`) and replace them with deployment versions.
 
@@ -43,39 +45,28 @@ $ kubectl get pods --watch
 You may also use `kubectl get all` repeatedly to see a list of all resources.  You should also verify if the application stays available by continuously reloading your browser window.
 
   * What happens if you delete a Frontend or API Pod? How long does it take for the system to react?
-    > When you delete a Frontend or API Pod, the following happens:
-    > - The Pod is immediately terminated and removed from the list of running Pods
-    > - The Replica Set associated with the Deployment detects that the desired number of replicas is not being met.
-    > - The Replica Set then creates a new Pod to replace the one that was deleted.
-    
-    > The reaction time for Kubernetes to create a new Pod can vary but typically takes a few seconds.
+    >The pod is terminated and removed from the running pods list, the desired number of replicas is less than excpected (the replica set detects it), so it creates a new pod to replace the one deleted. The reaction takes a few seconds
+ When you delete a Frontend or API Pod, the following happens:
     
   * What happens when you delete the Redis Pod?
 
-    > When you delete the Redis Pod, the following happens:
-    > - The Pod is immediately terminated and removed from the list of running Pods.
-    > - The Replica Set associated with the Redis Deployment (which is set to 1 replica) detects that there is no running instance.
-    > - The Replica Set then creates a new Redis Pod to replace the one that was deleted.
+    > As for the front end, a new pod will be created. however, the api won't be able to connect to the redis server until it's created
     
-    > This process should also take a few seconds to complete.
     
   * How can you change the number of instances temporarily to 3? Hint: look for scaling in the deployment documentation
 
-    > To temporarily change the number of instances to 3, you can scale the Deployment using the `kubectl scale` command:
+    > With:
     > ```shell
     > kubectl scale deployment <deployment-name> --replicas=3
     > ```
     
   * What autoscaling features are available? Which metrics are used?
 
-    > Kubernetes provides the Horizontal Pod Autoscaler (HPA) for autoscaling Deployments, ReplicaSets, and other resources. HPA adjusts the number of replicas based on observed CPU utilization or other select metrics.The most common metrics used for autoscaling include:
-    > - CPU utilization
-    > - Memory usage (with the appropriate metrics server)
-    > - Custom metrics provided via the Kubernetes API
+    > HPA and VPA. They mainly use the CPU utilization and memory usage , however there are also custom metrics provided via the kubernetes API.
     
   * How can you update a component? (see "Updating a Deployment" in the deployment documentation)
 
-    > Use `kubectl set image deployment/<deployment-name> <container-name>=<new-image>` to update the image directly. Kubernetes will handle the rolling update, replacing the old Pods with new ones that use the updated image.
+    > With:  `kubectl set image deployment/<deployment-name> <container-name>=<new-image>` 
 
 ## Subtask 3.3 - Put autoscaling in place and load-test it
 
@@ -115,7 +106,140 @@ Document your observations in the lab report. Document any difficulties you face
 
 
 ```````sh
-// TODO autoscaling description
+Name:                   api-deployment
+Namespace:              default
+CreationTimestamp:      Thu, 16 May 2024 18:36:23 +0000
+Labels:                 app=todo
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               component=api
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=todo
+           component=api
+  Containers:
+   api:
+    Image:      icclabcna/ccp2-k8s-todo-api
+    Port:       8081/TCP
+    Host Port:  0/TCP
+    Environment:
+      REDIS_ENDPOINT:  redis-svc
+      REDIS_PWD:       ccp2
+    Mounts:            <none>
+  Volumes:             <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   api-deployment-635dbdf3f1 (2/2 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  9m42s  deployment-controller  Scaled up replica set api-deployment-635dbdf3f1 to 2
+
+
+Name:                   frontend-deployment
+Namespace:              default
+CreationTimestamp:      Thu, 16 May 2024 18:58:19 +0000
+Labels:                 app=todo
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               component=frontend
+Replicas:               4 desired | 4 updated | 4 total | 4 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=todo
+           component=frontend
+  Containers:
+   frontend:
+    Image:      icclabcna/ccp2-k8s-todo-frontend
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Requests:
+      cpu:  10m
+    Environment:
+      API_ENDPOINT_URL:  http://api-svc:8081
+    Mounts:              <none>
+  Volumes:               <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   frontend-deployment-3b4d66a327 (4/4 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  5m31s  deployment-controller  Scaled up replica set frontend-deployment-3b4d66a327 to 2
+  Normal  ScalingReplicaSet  2m33s  deployment-controller  Scaled up replica set frontend-deployment-3b4d66a327 to 4 from 2
+
+
+Name:                   redis-deployment
+Namespace:              default
+CreationTimestamp:      Thu, 16 May 2024 19:12:23 +0000
+Labels:                 app=todo
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               component=redis
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=todo
+           component=redis
+  Containers:
+   redis:
+    Image:      redis
+    Port:       6379/TCP
+    Host Port:  0/TCP
+    Args:
+      redis-server
+      --requirepass ccp2
+      --appendonly yes
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   redis-deployment-56fb88dd96 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  2m2s  deployment-controller  Scaled up replica set redis-deployment-56fb88dd96 to 1
+
+Then with: kubectl describe horizontalpodautoscaler.autoscaling:
+
+Name:                                                  frontend-deployment
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Thu, 16 May 2024 20:13:31 +0000
+Reference:                                             Deployment/frontend-deployment
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  0% (0) / 30%
+Min replicas:                                          1
+Max replicas:                                          4
+Deployment pods:                                       4 current / 4 desired
+Conditions:
+  Type            Status  Reason               Message
+  ----            ------  ------               -------
+  AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent recommendation
+  ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooManyReplicas      the desired replica count is more than the maximum replica count
+Events:
+  Type    Reason             Age    From                       Message
+  ----    ------             ----   ----                       -------
+  Normal  SuccessfulRescale  4m29s  horizontal-pod-autoscaler  New size: 4; reason: cpu resource utilization (percentage of request) above target
 ```````
 
 ```yaml
